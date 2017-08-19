@@ -15,6 +15,134 @@
         <link rel="stylesheet" href="css/style.css">
         <!--js input here-->
         <script src="js/vendor/modernizr-2.8.3.min.js"></script>
+
+
+        <script>
+
+
+            function getByClass(oParent,sClass)
+            {
+                var oEle=document.getElementsByTagName('*');
+                var oResult=[];
+                for(var i=0;i<oEle.length;i++)
+                {
+                    if(oEle[i].className==sClass)
+                    {
+                      oResult.push(oEle[i]);
+                    }
+                }
+
+                return oResult;
+            }
+
+
+            window.onload=function ()
+            {
+                var oCarousel_inner=document.getElementById(carousel_inner);
+                var oPreview=getByClass(oCarousel_inner,'preview')[0];
+                var oNext=getByClass(oCarousel_inner,'next')[0];
+                var oLeft=getByClass(oCarousel_inner,'control_left')[0];
+                var oRight=getByClass(oCarousel_inner,'control_right')[0];
+
+                var oIndicator=document.getElementById('indicator');
+                var oInUl=oIndicator.getElementsByTagName('ul');
+                var oInLi=oIndicator.getElementsByTagName('li');
+                var oPic=document.getElementById('Pic');
+                var oPicLi=oPic.getElementsByTagName('li');
+                var nowZIndex=1;
+                var now=0;
+
+
+                // function 1: Show the preview and next button when move the mouse over and out;左右按钮的渐隐渐显效果;
+
+               oPreview.onmouseover= oLeft.onmouseover=function () {
+                    startMove(oPreview,'opacity',100);
+                };
+               oPreview.onmouseover= oLeft.onmouseout=function () {
+                    startMove(oPreview,'opacity',0);
+                };
+
+                oNext.onmouseover= oRight.onmouseover=function () {
+                    startMove(oNext,'opacity',100);
+                };
+                oNext.onmouseover= oRight.onmouseout=function () {
+                    startMove(oNext,'opacity',0);
+                };
+
+                //function2:大图切换,圆心导航的渐隐效果
+                for(var i=0;i<oInLi.length;i++)
+                {
+                    oInLi[i].index=i;
+                    oInLi[i].onclick=function ()//当鼠标移动到圆点时大图自动切换
+                    {
+                        now=this.index;
+                        tab();
+                        if(this.index==now)//实现是当前图片时不会再次刷新图片
+                            {return;}
+
+
+
+                    };
+
+                    oInLi[i].onmouseover=function ()
+                    {
+                        startMove(this,'opacity',100);
+
+                    };
+                    oInLi[i].onmouseout=function(){
+                        if(this.index!=now)
+                        {
+                            startMove(this,'opacity',30);
+//
+                        }
+
+                    };
+                }
+
+                //实现图片切换的函数
+                function tab() {
+                    oPicLi[now].style.zIndex=nowZIndex++;
+
+                    for(var i=0;i<oInLi.length;i++)
+                    {
+                        startMove(oInLi[i],'opacity',30);
+                        startMove(oPicLi[i],'opacity',0);
+
+                    }
+                    startMove(oInLi[now],'opacity',100);
+                    startMove(oPicLi[now],'opacity',100);
+
+
+//*****************************用于轮播图中有小图或文字展示时进行使用**********************************************
+//                    startMove(oInUl,'left',-(now-1)*oInLi[0].offsetWidth);
+                }
+
+                //function 3:show next picture when click the preview and next button;实现上、下图的切换
+                oPreview.onclick=function ()
+                {
+                    now--;
+                    if(now==-1)
+                    {
+                        now=oInLi.length-1;
+                    }
+                    tab();
+                };
+
+                oNext.onclick=function ()
+                {
+                    now++;
+                    if(now==oInLi.length)
+                    {
+                        now=0;
+                    }
+                    tab();
+                };
+
+               var timer= setInterval(oNext.onclick,3000);
+
+            };
+
+        </script>
     </head>
     <body>
         <!--[if lt IE 8]>
@@ -55,24 +183,33 @@
 
     <div id="carousel_inner">
 
+        <!--左右切换图片-->
+        <div >
+            <a class="control_left" href="javascript:;"><span class="preview"><</span></a>
+        </div>
+        <div  >
+            <a class="control_right"  href="javascript:;"><span class="next" >></span></a>
+        </div>
+
         <!--图片导航圆圈---->
-        <ol class="indicator">
-            <li></li>
-            <li></li>
-            <li></li>
-        </ol>
+        <div class="small">
+            <ul id="indicator">
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+            </ul>
+        </div>
+
 
         <!--轮播图片-->
-        <!--<img src="img/1.jpg" alt="1">-->
-        <!--<img src="img/2.jpg" alt="2">-->
-        <img src="img/3.jpg" alt="3">
-
-        <!--左右切换图片-->
-        <div class="control" id="control-left">
-            <span ><</span>
-        </div>
-        <div class="control" id="control-right" >
-            <span >></span>
+        <div class="bigPicture">
+            <ul id="Pic">
+                <li  style="z-index: 2;"><img src="img/1.jpg" alt="1"></li>
+                <li><img src="img/2.jpg" alt="2"></li>
+                <li><img src="img/3.jpg" alt="3"></li>
+                <li><img src="img/4.jpg" alt="4"></li>
+            </ul>
         </div>
     </div>
 
@@ -149,5 +286,6 @@
                 r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
             ga('create','UA-XXXXX-X','auto');ga('send','pageview');
         </script>
+        <script src="js/jsStyle.js"></script>
     </body>
 </html>
